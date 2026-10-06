@@ -1,6 +1,6 @@
 // Harsh Yadav - TYCS Roll 129
 // EventHub: Smart College Event & Fest Management System
-// Project Guide: Ms. Pranali Thakare
+// College Fest Portal 2026
 // Main Application Component with Dual Dashboard Modes & Modals
 
 import React, { useState } from 'react';
@@ -16,8 +16,10 @@ import QRScannerModal from './components/QRScannerModal';
 import CreateEventModal from './components/CreateEventModal';
 import ProjectSynopsisModal from './components/ProjectSynopsisModal';
 
+import { Sparkles } from 'lucide-react';
+
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { user, loading, toast } = useAuth();
   const [authView, setAuthView] = useState('login'); // 'login' | 'register'
   const [activeTab, setActiveTab] = useState('browse'); // 'browse' | 'tickets' | 'analytics' | 'announcements'
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,10 +44,31 @@ function AppContent() {
 
   // Not logged in: Show Login / Register
   if (!user) {
-    if (authView === 'register') {
-      return <Register onSwitchToLogin={() => setAuthView('login')} />;
-    }
-    return <Login onSwitchToRegister={() => setAuthView('register')} />;
+    return (
+      <>
+        {toast && (
+          <div
+            className={`fixed top-4 right-4 z-50 flex items-center gap-2.5 px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold text-white transition-all transform animate-bounce ${
+              toast.type === 'error'
+                ? 'bg-rose-600 shadow-rose-600/30'
+                : toast.type === 'warning'
+                ? 'bg-amber-500 shadow-amber-500/30'
+                : toast.type === 'info'
+                ? 'bg-slate-800 shadow-slate-800/30'
+                : 'bg-emerald-600 shadow-emerald-600/30'
+            }`}
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>{toast.message}</span>
+          </div>
+        )}
+        {authView === 'register' ? (
+          <Register onSwitchToLogin={() => setAuthView('login')} />
+        ) : (
+          <Login onSwitchToRegister={() => setAuthView('register')} />
+        )}
+      </>
+    );
   }
 
   return (

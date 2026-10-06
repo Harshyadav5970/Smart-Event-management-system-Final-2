@@ -1,6 +1,6 @@
 // Harsh Yadav - TYCS Roll 129
 // EventHub: Smart College Event & Fest Management System
-// Project Guide: Ms. Pranali Thakare
+// College Fest Portal 2026
 // API Client Helper with Token Interceptor
 
 const BASE_URL = '/api';
@@ -15,10 +15,23 @@ export async function request(endpoint, options = {}) {
   };
 
   try {
-    const res = await fetch(`${BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
+    let res;
+    try {
+      res = await fetch(`${BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+      });
+    } catch (networkErr) {
+      // If relative endpoint fails (e.g., opened on different port or static preview), retry directly against backend port 5000
+      if (!BASE_URL.startsWith('http')) {
+        res = await fetch(`http://localhost:5000/api${endpoint}`, {
+          ...options,
+          headers,
+        });
+      } else {
+        throw networkErr;
+      }
+    }
 
     const data = await res.json().catch(() => ({}));
 

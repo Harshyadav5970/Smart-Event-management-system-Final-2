@@ -1,6 +1,6 @@
 // Harsh Yadav - TYCS Roll 129
 // EventHub: Smart College Event & Fest Management System
-// Project Guide: Ms. Pranali Thakare
+// College Fest Portal 2026
 // Registration & QR Gate Check-in Routes
 
 const express = require('express');

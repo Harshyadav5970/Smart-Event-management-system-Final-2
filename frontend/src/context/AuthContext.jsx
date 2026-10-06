@@ -1,6 +1,6 @@
 // Harsh Yadav - TYCS Roll 129
 // EventHub: Smart College Event & Fest Management System
-// Project Guide: Ms. Pranali Thakare
+// College Fest Portal 2026
 // Authentication Context & Viva Demo Session Manager
 
 import React, { createContext, useContext, useState, useEffect } from 'react';

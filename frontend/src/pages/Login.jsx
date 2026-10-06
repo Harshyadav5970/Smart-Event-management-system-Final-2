@@ -1,22 +1,27 @@
 // Harsh Yadav - TYCS Roll 129
 // EventHub: Smart College Event & Fest Management System
-// Project Guide: Ms. Pranali Thakare
+// College Fest Portal 2026
 // Login Page with 1-Click Viva Demo Role Fast-Login
 
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Sparkles, GraduationCap, Lock, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Sparkles, GraduationCap, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 
 export default function Login({ onSwitchToRegister }) {
   const { login, demoLogin } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg('');
     setLoading(true);
-    await login(email, password);
+    const result = await login(email, password);
+    if (!result || !result.success) {
+      setErrorMsg(result?.message || 'Login failed. Please check your credentials or click register below.');
+    }
     setLoading(false);
   };
 
@@ -68,7 +73,7 @@ export default function Login({ onSwitchToRegister }) {
                 <p className="text-xs font-bold text-slate-800 group-hover:text-brand-700">
                   🎓 Harsh Yadav (Student)
                 </p>
-                <p className="text-[10px] text-slate-500">harsh@college.edu • Pre-registered passes</p>
+                <p className="text-[10px] text-slate-500">harshlyadav8105@gmail.com • Pre-registered passes</p>
               </div>
               <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-1 transition-transform" />
             </button>
@@ -106,6 +111,24 @@ export default function Login({ onSwitchToRegister }) {
         {/* Standard Manual Login Card */}
         <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-soft">
           <h3 className="font-bold text-sm text-slate-900 mb-4">Or sign in manually</h3>
+
+          {errorMsg && (
+            <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p>{errorMsg}</p>
+                {errorMsg.toLowerCase().includes('register') && (
+                  <button
+                    type="button"
+                    onClick={onSwitchToRegister}
+                    className="mt-1.5 text-brand-600 hover:text-brand-700 underline font-bold cursor-pointer block"
+                  >
+                    Click here to create your account &rarr;
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
             <div>

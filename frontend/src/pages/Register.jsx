@@ -1,15 +1,16 @@
 // Harsh Yadav - TYCS Roll 129
 // EventHub: Smart College Event & Fest Management System
-// Project Guide: Ms. Pranali Thakare
+// College Fest Portal 2026
 // Registration / Signup Page
 
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Sparkles, GraduationCap, Lock, Mail, User, Phone, ArrowLeft } from 'lucide-react';
+import { Sparkles, GraduationCap, Lock, Mail, User, Phone, ArrowLeft, AlertCircle } from 'lucide-react';
 
 export default function Register({ onSwitchToLogin }) {
   const { register } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -24,8 +25,12 @@ export default function Register({ onSwitchToLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg('');
     setLoading(true);
-    await register(formData);
+    const result = await register(formData);
+    if (!result || !result.success) {
+      setErrorMsg(result?.message || 'Registration failed. Please check inputs and try again.');
+    }
     setLoading(false);
   };
 
@@ -50,6 +55,24 @@ export default function Register({ onSwitchToLogin }) {
         </div>
 
         <div className="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-soft">
+          {errorMsg && (
+            <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p>{errorMsg}</p>
+                {errorMsg.toLowerCase().includes('already exists') && (
+                  <button
+                    type="button"
+                    onClick={onSwitchToLogin}
+                    className="mt-1.5 text-brand-600 hover:text-brand-700 underline font-bold cursor-pointer block"
+                  >
+                    Click here to Sign In &rarr;
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
             <div>
               <label className="font-bold text-slate-700 block mb-1">Full Name</label>

@@ -51,6 +51,15 @@ app.use('/api/tickets', ticketRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/announcements', announcementRoutes);
 
+// Serve static frontend files (allows http://localhost:5000 to serve full UI!)
+const fs = require('fs');
+const frontendDist = path.join(__dirname, '../frontend/dist');
+const rootStatic = path.join(__dirname, '..');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+}
+app.use(express.static(rootStatic));
+
 // Global Error Handler (Prevents server crashes)
 app.use((err, req, res, next) => {
   console.error('[EventHub Global Error]:', err.stack);
