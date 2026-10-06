@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #F8F9FD;
+    color: #0F172A;
+  }
+}
+
+/* Custom organic fluid gradient backdrop resembling Codeflying modern aesthetic */
+.mesh-gradient-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 600px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mesh-shape-1 {
+  position: absolute;
+  top: -120px;
+  right: -50px;
+  width: 750px;
+  height: 520px;
+  background: radial-gradient(circle at center, rgba(251, 146, 60, 0.45) 0%, rgba(244, 63, 94, 0.3) 45%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  filter: blur(50px);
+  transform: rotate(-15deg);
+}
+
+.mesh-shape-2 {
+  position: absolute;
+  top: -180px;
+  left: 10%;
+  width: 800px;
+  height: 550px;
+  background: radial-gradient(circle at center, rgba(167, 139, 250, 0.5) 0%, rgba(129, 140, 248, 0.35) 40%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  filter: blur(55px);
+  transform: rotate(12deg);
+}
+
+.mesh-shape-3 {
+  position: absolute;
+  top: 100px;
+  left: 35%;
+  width: 500px;
+  height: 400px;
+  background: radial-gradient(circle at center, rgba(236, 72, 153, 0.25) 0%, rgba(249, 115, 22, 0.2) 50%, rgba(255, 255, 255, 0) 70%);
+  filter: blur(45px);
+}
+
+/* Smooth subtle transitions */
+.transition-smooth {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-card-subtle {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print Only the Ticket Pass Card (Omit everything else) */
+@media print {
+  @page {
+    size: portrait;
+    margin: 10mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+  }
+
+  /* Hide app header, sidebars, background mesh, and buttons */
+  aside, header, nav, .mesh-gradient-bg, button, .no-print-area {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Hide everything in body */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make printable ticket visible and centered */
+  .printable-ticket,
+  .printable-ticket * {
+    visibility: visible !important;
+  }
+
+  .printable-ticket {
+    position: absolute !important;
+    left: 50% !important;
+    top: 20px !important;
+    transform: translateX(-50%) !important;
+    width: 440px !important;
+    max-width: 95% !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: 1.5px solid #cbd5e1 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  .printable-ticket .no-print-area,
+  .printable-ticket button {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
