@@ -33,8 +33,8 @@ export default function AdminDashboard({ onOpenScanner, onOpenCreateEvent }) {
           api.get('/analytics/dashboard'),
           api.get('/health')
         ]);
-        if (dashRes.success) setAnalytics(dashRes.data);
-        if (healthRes.status) setHealthInfo(healthRes);
+        if (dashRes && dashRes.success) setAnalytics(dashRes.data || dashRes.analytics || dashRes.stats);
+        if (healthRes && (healthRes.status || healthRes.success)) setHealthInfo(healthRes);
       } catch (err) {
         console.error(err);
       } finally {

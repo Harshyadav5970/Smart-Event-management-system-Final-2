@@ -34,8 +34,8 @@ export default function OrganizerDashboard({
     setLoading(true);
     try {
       const res = await api.get('/analytics/dashboard');
-      if (res.success && res.data) {
-        setAnalytics(res.data);
+      if (res && res.success) {
+        setAnalytics(res.data || res.analytics || res.stats);
       }
     } catch (err) {
       console.error('Failed to load organizer analytics:', err);

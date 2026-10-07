@@ -1,15 +1,17 @@
 // Harsh Yadav - TYCS Roll 129
 // EventHub: Smart College Event & Fest Management System
+// College Fest Portal 2026
 // Resilient Client-Side Fallback Engine (Guarantees 100% Zero-Crash on GitHub Pages / Static Hosting)
 
 import QRCode from 'qrcode';
 
-const STORAGE_KEY = 'eventhub_offline_database';
+const STORAGE_KEY = 'eventhub_offline_database_v2';
 
 const INITIAL_DATA = {
   users: [
     {
       id: 'usr_harsh_dev',
+      _id: 'usr_harsh_dev',
       name: 'Harsh Yadav',
       email: 'harshlyadav8105@gmail.com',
       password: 'password123',
@@ -21,6 +23,7 @@ const INITIAL_DATA = {
     },
     {
       id: 'usr_harsh_college',
+      _id: 'usr_harsh_college',
       name: 'Harsh Yadav',
       email: 'harsh@college.edu',
       password: 'password123',
@@ -32,6 +35,7 @@ const INITIAL_DATA = {
     },
     {
       id: 'usr_techclub',
+      _id: 'usr_techclub',
       name: 'Tech Council & Robotics Club',
       email: 'techclub@college.edu',
       password: 'password123',
@@ -43,6 +47,7 @@ const INITIAL_DATA = {
     },
     {
       id: 'usr_admin',
+      _id: 'usr_admin',
       name: 'Faculty Administration (HOD)',
       email: 'admin@college.edu',
       password: 'password123',
@@ -56,8 +61,9 @@ const INITIAL_DATA = {
   events: [
     {
       id: 'ev_hack2026',
+      _id: 'ev_hack2026',
       title: 'Hackathon 2026: Code The Future',
-      description: '36-hour continuous inter-collegiate software hackathon. Build innovative AI, Web3, and IoT solutions.',
+      description: '36-hour continuous inter-collegiate software hackathon. Build innovative AI, Web3, and IoT solutions for smart cities and education.',
       category: 'Technical',
       date: '2026-03-24',
       time: '09:00 AM',
@@ -72,8 +78,9 @@ const INITIAL_DATA = {
     },
     {
       id: 'ev_robowars',
+      _id: 'ev_robowars',
       title: 'RoboWars TechFest: Arena Combat',
-      description: 'High-octane metal combat in a reinforced steel battle arena! 15kg & 30kg robots fight for the trophy.',
+      description: 'High-octane metal combat in a reinforced steel battle arena! 15kg & 30kg wired/wireless robots fight for the trophy.',
       category: 'Technical',
       date: '2026-03-25',
       time: '11:00 AM',
@@ -88,8 +95,9 @@ const INITIAL_DATA = {
     },
     {
       id: 'ev_webcraft',
+      _id: 'ev_webcraft',
       title: 'WebCraft Workshop: Modern Web Apps',
-      description: 'Hands-on practical masterclass on Full-Stack JavaScript, Vite, React, and REST APIs. Free for all TYCS students.',
+      description: 'Hands-on practical masterclass on Full-Stack JavaScript, Vite, React, and REST APIs by industry alumni. Free for all TYCS students.',
       category: 'Workshop',
       date: '2026-03-18',
       time: '10:00 AM',
@@ -104,8 +112,9 @@ const INITIAL_DATA = {
     },
     {
       id: 'ev_resonance',
+      _id: 'ev_resonance',
       title: 'Cultural Night: Resonance 2026',
-      description: 'Flagship musical gala night! Live acoustic bands, classical fusion, group dance, and DJ night.',
+      description: 'The flagship musical gala night! Live acoustic bands, classical fusion performances, group street dance, and celebrity DJ night.',
       category: 'Cultural',
       date: '2026-03-26',
       time: '05:30 PM',
@@ -120,8 +129,9 @@ const INITIAL_DATA = {
     },
     {
       id: 'ev_cricket',
+      _id: 'ev_cricket',
       title: 'Inter-College Box Cricket League',
-      description: 'Annual 7-a-side floodlight box cricket tournament. 16 departmental teams clash for the trophy.',
+      description: 'Annual 7-a-side floodlight box cricket tournament. 16 departmental teams clash for the perpetual rolling trophy.',
       category: 'Sports',
       date: '2026-03-28',
       time: '08:00 AM',
@@ -139,8 +149,9 @@ const INITIAL_DATA = {
   announcements: [
     {
       id: 'ann_1',
+      _id: 'ann_1',
       title: 'Hackathon 2026 Problem Statements Released',
-      content: 'Problem statements for FinTech, Healthcare, and Campus Automation tracks are live.',
+      content: 'Problem statements for FinTech, Healthcare, and Campus Automation tracks are now live. Team verification starts at 8:30 AM in Lab 401.',
       priority: 'urgent',
       authorName: 'Tech Council Head',
       authorRole: 'organizer',
@@ -148,8 +159,9 @@ const INITIAL_DATA = {
     },
     {
       id: 'ann_2',
+      _id: 'ann_2',
       title: 'Certificates Available for WebCraft Workshop',
-      content: 'Students who attended the hands-on session can now download their verified certificate from My Passes.',
+      content: 'Students who attended the hands-on session can now download their verified certificate from the My Passes section.',
       priority: 'normal',
       authorName: 'Faculty Administration',
       authorRole: 'admin',
@@ -161,7 +173,12 @@ const INITIAL_DATA = {
 function getStore() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.events) && parsed.events.length > 0) {
+        return parsed;
+      }
+    }
   } catch (e) {
     console.warn('[Offline Engine] Error reading store:', e);
   }
@@ -185,6 +202,7 @@ async function ensureDefaultPasses(store) {
     store.registrations = [
       {
         id: 'reg_1',
+        _id: 'reg_1',
         ticketId: 'EH-2026-HACK1',
         eventId: 'ev_hack2026',
         studentId: 'usr_harsh_dev',
@@ -202,6 +220,7 @@ async function ensureDefaultPasses(store) {
       },
       {
         id: 'reg_2',
+        _id: 'reg_2',
         ticketId: 'EH-2026-WEBC9',
         eventId: 'ev_webcraft',
         studentId: 'usr_harsh_dev',
@@ -226,21 +245,39 @@ async function ensureDefaultPasses(store) {
 // Client Fallback Request Dispatcher
 export async function handleClientFallback(endpoint, options = {}) {
   const method = (options.method || 'GET').toUpperCase();
-  const body = options.body ? JSON.parse(options.body) : {};
+  const body = options.body ? (typeof options.body === 'string' ? JSON.parse(options.body) : options.body) : {};
   const token = localStorage.getItem('eventhub_token');
   const store = getStore();
   await ensureDefaultPasses(store);
 
   console.info(`[Offline Resilient Mode] Dispatched ${method} ${endpoint}`);
 
-  // 1. /auth/login
-  if (endpoint === '/auth/login' && method === 'POST') {
+  // Clean endpoint for matching (remove query params)
+  const cleanUrl = endpoint.split('?')[0];
+
+  // 1. /health
+  if (cleanUrl === '/health' && method === 'GET') {
+    return {
+      status: 'ONLINE',
+      success: true,
+      project: 'EventHub - Smart College Event & Fest Management System',
+      author: 'Harsh Yadav',
+      rollNo: '129',
+      class: 'TYCS-B',
+      department: 'Computer Science',
+      dbEngine: 'Resilient Offline Client Storage (GitHub Pages)'
+    };
+  }
+
+  // 2. /auth/login
+  if (cleanUrl === '/auth/login' && method === 'POST') {
     const cleanEmail = (body.email || '').toLowerCase().trim();
     let user = store.users.find(u => u.email.toLowerCase().trim() === cleanEmail);
 
     if (!user && (cleanEmail === 'harshlyadav8105@gmail.com' || cleanEmail === 'harsh@college.edu')) {
       user = {
         id: 'usr_harsh_dev',
+        _id: 'usr_harsh_dev',
         name: 'Harsh Yadav',
         email: cleanEmail,
         password: body.password || 'password123',
@@ -272,8 +309,8 @@ export async function handleClientFallback(endpoint, options = {}) {
     };
   }
 
-  // 2. /auth/register
-  if (endpoint === '/auth/register' && method === 'POST') {
+  // 3. /auth/register
+  if (cleanUrl === '/auth/register' && method === 'POST') {
     const cleanEmail = (body.email || '').toLowerCase().trim();
     const existing = store.users.find(u => u.email.toLowerCase().trim() === cleanEmail);
     if (existing) {
@@ -283,8 +320,10 @@ export async function handleClientFallback(endpoint, options = {}) {
       };
     }
 
+    const newId = 'usr_' + Date.now().toString(36);
     const newUser = {
-      id: 'usr_' + Date.now().toString(36),
+      id: newId,
+      _id: newId,
       name: (body.name || 'Student').trim(),
       email: cleanEmail,
       password: body.password || 'password123',
@@ -310,8 +349,8 @@ export async function handleClientFallback(endpoint, options = {}) {
     };
   }
 
-  // 3. /auth/demo-login
-  if (endpoint === '/auth/demo-login' && method === 'POST') {
+  // 4. /auth/demo-login
+  if (cleanUrl === '/auth/demo-login' && method === 'POST') {
     const role = body.role || 'student';
     let targetEmail = 'harshlyadav8105@gmail.com';
     if (role === 'organizer') targetEmail = 'techclub@college.edu';
@@ -330,8 +369,8 @@ export async function handleClientFallback(endpoint, options = {}) {
     };
   }
 
-  // 4. /auth/me
-  if (endpoint === '/auth/me' && method === 'GET') {
+  // 5. /auth/me
+  if (cleanUrl === '/auth/me' && method === 'GET') {
     const raw = localStorage.getItem('eventhub_current_user');
     if (raw) {
       return { success: true, user: JSON.parse(raw) };
@@ -339,36 +378,73 @@ export async function handleClientFallback(endpoint, options = {}) {
     return { success: false, message: 'Session expired' };
   }
 
-  // 5. /events
-  if (endpoint === '/events' && method === 'GET') {
-    return { success: true, events: store.events };
+  // 6. /events (Returns data AND events arrays for bulletproof compatibility!)
+  if (cleanUrl === '/events' && method === 'GET') {
+    return {
+      success: true,
+      count: store.events.length,
+      data: store.events,
+      events: store.events
+    };
   }
 
-  if (endpoint === '/events' && method === 'POST') {
+  if (cleanUrl === '/events' && method === 'POST') {
+    const newId = 'ev_' + Date.now().toString(36);
     const newEvent = {
-      id: 'ev_' + Date.now().toString(36),
+      id: newId,
+      _id: newId,
       ...body,
       registeredCount: 0,
       status: 'Upcoming'
     };
     store.events.unshift(newEvent);
     saveStore(store);
-    return { success: true, event: newEvent, message: 'Event created successfully!' };
+    return { success: true, data: newEvent, event: newEvent, message: 'Event created successfully!' };
   }
 
-  if (endpoint.startsWith('/events/') && endpoint.endsWith('/status') && method === 'PUT') {
-    const parts = endpoint.split('/');
+  if (cleanUrl.startsWith('/events/') && method === 'PUT') {
+    const parts = cleanUrl.split('/');
     const evId = parts[2];
     const ev = store.events.find(e => e.id === evId || e._id === evId);
     if (ev) {
-      ev.status = body.status || 'Completed';
+      if (body.status) ev.status = body.status;
       saveStore(store);
-      return { success: true, event: ev, message: `Event status updated to ${ev.status}` };
+      return { success: true, data: ev, event: ev, message: `Event status updated to ${ev.status}` };
     }
   }
 
-  // 6. /tickets/register
-  if (endpoint === '/tickets/register' && method === 'POST') {
+  // 7. /tickets/my-tickets & /tickets/my
+  if ((cleanUrl === '/tickets/my-tickets' || cleanUrl === '/tickets/my') && method === 'GET') {
+    const curUser = JSON.parse(localStorage.getItem('eventhub_current_user') || '{}');
+    const userEmail = (curUser.email || 'harshlyadav8105@gmail.com').toLowerCase().trim();
+
+    const myTickets = store.registrations.filter(
+      r =>
+        (r.studentEmail && r.studentEmail.toLowerCase() === userEmail) ||
+        r.studentId === curUser.id ||
+        r.studentId === curUser._id
+    );
+    return {
+      success: true,
+      count: myTickets.length,
+      data: myTickets,
+      tickets: myTickets
+    };
+  }
+
+  // 8. /tickets/event/:id
+  if (cleanUrl.startsWith('/tickets/event/') && method === 'GET') {
+    const evId = cleanUrl.split('/')[3];
+    const attendees = store.registrations.filter(r => r.eventId === evId);
+    return {
+      success: true,
+      data: attendees,
+      attendees
+    };
+  }
+
+  // 9. /tickets/register
+  if (cleanUrl === '/tickets/register' && method === 'POST') {
     const { eventId, email, name, rollNo, department } = body;
     const curUser = JSON.parse(localStorage.getItem('eventhub_current_user') || '{}');
     const targetEmail = (email || curUser.email || 'harshlyadav8105@gmail.com').toLowerCase().trim();
@@ -391,11 +467,13 @@ export async function handleClientFallback(endpoint, options = {}) {
     const payload = JSON.stringify({ ticketId, eventTitle: ev.title, studentEmail: targetEmail });
     const qrData = await QRCode.toDataURL(payload, { margin: 2 });
 
+    const newTicketId = 'reg_' + Date.now().toString(36);
     const newTicket = {
-      id: 'reg_' + Date.now().toString(36),
+      id: newTicketId,
+      _id: newTicketId,
       ticketId,
       eventId: ev.id || eventId,
-      studentId: curUser.id || 'usr_harsh_dev',
+      studentId: curUser.id || curUser._id || 'usr_harsh_dev',
       studentName: name || curUser.name || 'Harsh Yadav',
       studentEmail: targetEmail,
       studentRoll: rollNo || curUser.rollNo || '129',
@@ -403,7 +481,7 @@ export async function handleClientFallback(endpoint, options = {}) {
       eventTitle: ev.title,
       eventDate: ev.date,
       eventVenue: ev.venue,
-      feePaid: ev.fee || 0,
+      feePaid: Number(ev.fee) || 0,
       qrCodeData: qrData,
       checkInStatus: false,
       createdAt: new Date().toISOString()
@@ -416,23 +494,13 @@ export async function handleClientFallback(endpoint, options = {}) {
     return {
       success: true,
       message: `E-Ticket ${ticketId} generated successfully!`,
+      data: newTicket,
       ticket: newTicket
     };
   }
 
-  // 7. /tickets/my
-  if (endpoint === '/tickets/my' && method === 'GET') {
-    const curUser = JSON.parse(localStorage.getItem('eventhub_current_user') || '{}');
-    const userEmail = (curUser.email || 'harshlyadav8105@gmail.com').toLowerCase().trim();
-
-    const myTickets = store.registrations.filter(
-      r => r.studentEmail?.toLowerCase() === userEmail || r.studentId === curUser.id
-    );
-    return { success: true, tickets: myTickets };
-  }
-
-  // 8. /tickets/verify
-  if (endpoint === '/tickets/verify' && method === 'POST') {
+  // 10. /tickets/verify
+  if (cleanUrl === '/tickets/verify' && method === 'POST') {
     const { ticketId } = body;
     const ticket = store.registrations.find(r => r.ticketId === ticketId);
     if (!ticket) return { success: false, message: 'Invalid ticket pass.' };
@@ -453,36 +521,85 @@ export async function handleClientFallback(endpoint, options = {}) {
     return {
       success: true,
       message: `Verified! Entry allowed for ${ticket.studentName}`,
+      data: ticket,
       ticket
     };
   }
 
-  // 9. /analytics
-  if (endpoint === '/analytics' && method === 'GET') {
+  // 11. /analytics/dashboard & /analytics
+  if ((cleanUrl === '/analytics/dashboard' || cleanUrl === '/analytics') && method === 'GET') {
     const totalEvents = store.events.length;
     const totalRegistrations = store.registrations.length;
-    const totalCheckedIn = store.registrations.filter(r => r.checkInStatus).length;
-    const totalRevenue = store.registrations.reduce((acc, r) => acc + (r.feePaid || 0), 0);
+    const totalRevenue = store.registrations.reduce((acc, r) => acc + (Number(r.feePaid) || 0), 0);
+    const checkedInCount = store.registrations.filter(r => r.checkInStatus).length;
+    const attendanceRate = totalRegistrations > 0 ? Math.round((checkedInCount / totalRegistrations) * 100) : 0;
+
+    const categoryBreakdown = { Technical: 0, Cultural: 0, Sports: 0, Workshop: 0 };
+    store.events.forEach(e => {
+      if (categoryBreakdown[e.category] !== undefined) categoryBreakdown[e.category] += 1;
+    });
+
+    const departmentBreakdown = {};
+    store.registrations.forEach(r => {
+      const dept = r.studentDept || 'Computer Science';
+      departmentBreakdown[dept] = (departmentBreakdown[dept] || 0) + 1;
+    });
+
+    const eventStats = store.events.map(e => {
+      const eventRegs = store.registrations.filter(r => r.eventId === e.id || r.eventId === e._id);
+      const eventChecked = eventRegs.filter(r => r.checkInStatus).length;
+      const eventRev = eventRegs.reduce((sum, r) => sum + (Number(r.feePaid) || 0), 0);
+      return {
+        id: e.id || e._id,
+        _id: e.id || e._id,
+        title: e.title,
+        category: e.category,
+        status: e.status,
+        date: e.date,
+        venue: e.venue,
+        fee: e.fee,
+        registrations: eventRegs.length,
+        checkIns: eventChecked,
+        revenue: eventRev,
+        occupancyRate: e.maxSeats > 0 ? Math.round((eventRegs.length / e.maxSeats) * 100) : 0
+      };
+    });
+
+    const analyticsData = {
+      summary: {
+        totalEvents,
+        totalRegistrations,
+        totalRevenue,
+        checkedInCount,
+        attendanceRate,
+        totalStudents: store.users.filter(u => u.role === 'student').length
+      },
+      categoryBreakdown,
+      departmentBreakdown,
+      eventStats
+    };
 
     return {
       success: true,
-      stats: {
-        totalEvents,
-        totalRegistrations,
-        totalCheckedIn,
-        totalRevenue
-      }
+      data: analyticsData,
+      stats: analyticsData.summary
     };
   }
 
-  // 10. /announcements
-  if (endpoint === '/announcements' && method === 'GET') {
-    return { success: true, announcements: store.announcements };
+  // 12. /announcements
+  if (cleanUrl === '/announcements' && method === 'GET') {
+    return {
+      success: true,
+      data: store.announcements,
+      announcements: store.announcements
+    };
   }
 
-  if (endpoint === '/announcements' && method === 'POST') {
+  if (cleanUrl === '/announcements' && method === 'POST') {
+    const newId = 'ann_' + Date.now().toString(36);
     const newAnn = {
-      id: 'ann_' + Date.now().toString(36),
+      id: newId,
+      _id: newId,
       title: body.title,
       content: body.content,
       priority: body.priority || 'normal',
@@ -492,7 +609,14 @@ export async function handleClientFallback(endpoint, options = {}) {
     };
     store.announcements.unshift(newAnn);
     saveStore(store);
-    return { success: true, announcement: newAnn, message: 'Notice posted!' };
+    return { success: true, data: newAnn, announcement: newAnn, message: 'Notice posted!' };
+  }
+
+  if (cleanUrl.startsWith('/announcements/') && method === 'DELETE') {
+    const id = cleanUrl.split('/')[2];
+    store.announcements = store.announcements.filter(a => a.id !== id && a._id !== id);
+    saveStore(store);
+    return { success: true, message: 'Notice removed!' };
   }
 
   return { success: true, data: [] };

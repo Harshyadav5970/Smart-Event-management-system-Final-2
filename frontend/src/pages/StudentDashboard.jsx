@@ -43,9 +43,9 @@ export default function StudentDashboard({
         api.get('/announcements')
       ]);
 
-      if (eventsRes.success) setEvents(eventsRes.data || []);
-      if (ticketsRes.success) setMyTickets(ticketsRes.data || []);
-      if (annRes.success) setAnnouncements(annRes.data || []);
+      if (eventsRes && eventsRes.success) setEvents(eventsRes.data || eventsRes.events || []);
+      if (ticketsRes && ticketsRes.success) setMyTickets(ticketsRes.data || ticketsRes.tickets || []);
+      if (annRes && annRes.success) setAnnouncements(annRes.data || annRes.announcements || []);
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
     } finally {
@@ -79,20 +79,22 @@ export default function StudentDashboard({
   };
 
   // Filter events by search, category, and fee
-  const filteredEvents = events.filter(e => {
+  const filteredEvents = (events || []).filter(e => {
+    if (!e) return false;
     // Category
-    if (selectedCategory !== 'All' && e.category.toLowerCase() !== selectedCategory.toLowerCase()) {
+    if (selectedCategory !== 'All' && e.category && e.category.toLowerCase() !== selectedCategory.toLowerCase()) {
       return false;
     }
     // Fee type
-    if (feeType === 'free' && e.fee > 0) return false;
-    if (feeType === 'paid' && e.fee === 0) return false;
+    const feeNum = Number(e.fee) || 0;
+    if (feeType === 'free' && feeNum > 0) return false;
+    if (feeType === 'paid' && feeNum === 0) return false;
     // Search
     if (searchQuery && searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase().trim();
-      const matchTitle = e.title.toLowerCase().includes(q);
-      const matchVenue = e.venue.toLowerCase().includes(q);
-      const matchClub = e.clubName && e.clubName.toLowerCase().includes(q);
+      const matchTitle = (e.title || '').toLowerCase().includes(q);
+      const matchVenue = (e.venue || '').toLowerCase().includes(q);
+      const matchClub = (e.clubName || '').toLowerCase().includes(q);
       if (!matchTitle && !matchVenue && !matchClub) return false;
     }
     return true;
